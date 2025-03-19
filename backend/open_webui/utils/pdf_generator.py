@@ -68,7 +68,7 @@ class PDFGenerator:
                 <br/>
 
                 <div>
-                    {content}
+                    {html_content}
                 </div>
             </div>
             <br/>
