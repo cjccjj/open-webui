@@ -53,7 +53,7 @@ class PDFGenerator:
         # extends pymdownx extension to convert markdown to html.
         # - https://facelessuser.github.io/pymdown-extensions/usage_notes/
         html_content = markdown(content, extensions=["pymdownx.arithmatex"])
-
+        print(F"Markdown convert: {html_content}")
         content = content.replace("\n", "<br/>")
         html_message = f"""
             <div>
