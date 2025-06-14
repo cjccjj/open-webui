@@ -652,14 +652,9 @@ input[type='number'] {
 	white-space: nowrap;
 }
 
-body {
-	background: #fff;
-	color: #000;
-}
-
-.dark body {
-	background: #171717;
-	color: #eee;
+/* Hide specific model tag label inside model buttons */
+button[aria-label="model-item"] .flex-shrink-0 > .bg-gray-500\\/20 {
+  display: none !important;
 }
 
 /* Position the handle relative to each LI */
