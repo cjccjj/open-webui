@@ -1142,18 +1142,16 @@
 													}
 
 													// Check if Ctrl + R is pressed
-													/*
 													if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
 														e.preventDefault();
-														console.log('regenerate');
+														console.log('regenerate skipped');
 
 														const regenerateButton = [
 															...document.getElementsByClassName('regenerate-response-button')
 														]?.at(-1);
 
-														regenerateButton?.click();
+														// regenerateButton?.click();
 													}
-													*/
 
 													if (prompt === '' && e.key == 'ArrowUp') {
 														e.preventDefault();
@@ -1336,13 +1334,13 @@
 												// Check if Ctrl + R is pressed
 												if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
 													e.preventDefault();
-													console.log('regenerate');
+													console.log('regenerate skipped');
 
 													const regenerateButton = [
 														...document.getElementsByClassName('regenerate-response-button')
 													]?.at(-1);
 
-													regenerateButton?.click();
+													// regenerateButton?.click();
 												}
 
 												if (prompt === '' && e.key == 'ArrowUp') {
