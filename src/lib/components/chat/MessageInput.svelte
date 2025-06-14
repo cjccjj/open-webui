@@ -1253,17 +1253,17 @@
 																createMessagePair(prompt);
 															}
 
-															// Check if Ctrl + R is pressed
-															if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
-																e.preventDefault();
-																console.log('regenerate');
+														// Check if Ctrl + R is pressed
+														if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
+															e.preventDefault();
+															console.log('regenerate skipped');
 
 																const regenerateButton = [
 																	...document.getElementsByClassName('regenerate-response-button')
 																]?.at(-1);
 
-																regenerateButton?.click();
-															}
+															// regenerateButton?.click();
+														}
 
 															if (prompt === '' && e.key == 'ArrowUp') {
 																e.preventDefault();
@@ -1369,6 +1369,267 @@
 																					}
 																				);
 
+																			await uploadFileHandler(file, true);
+																		}
+																	}
+																}
+															}
+														}
+													}}
+												/>
+											{/key}
+										</div>
+									{:else}
+										<textarea
+											id="chat-input"
+											dir={$settings?.chatDirection ?? 'auto'}
+											bind:this={chatInputElement}
+											class="scrollbar-hidden bg-transparent dark:text-gray-200 outline-hidden w-full pt-4 pb-1 px-1 resize-none"
+											placeholder={placeholder ? placeholder : $i18n.t('Send a Message')}
+											bind:value={prompt}
+											on:input={() => {
+												command = getCommand();
+											}}
+											on:click={() => {
+												command = getCommand();
+											}}
+											on:compositionstart={() => (isComposing = true)}
+											on:compositionend={(e) => {
+												compositionEndedAt = e.timeStamp;
+												isComposing = false;
+											}}
+											on:keydown={async (e) => {
+												const isCtrlPressed = e.ctrlKey || e.metaKey; // metaKey is for Cmd key on Mac
+
+												const commandsContainerElement =
+													document.getElementById('commands-container');
+
+												if (e.key === 'Escape') {
+													stopResponse();
+												}
+
+												// Command/Ctrl + Shift + Enter to submit a message pair
+												if (isCtrlPressed && e.key === 'Enter' && e.shiftKey) {
+													e.preventDefault();
+													createMessagePair(prompt);
+												}
+
+												// Check if Ctrl + R is pressed
+												if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
+													e.preventDefault();
+													console.log('regenerate skipped');
+
+													const regenerateButton = [
+														...document.getElementsByClassName('regenerate-response-button')
+													]?.at(-1);
+
+													// regenerateButton?.click();
+												}
+
+												if (prompt === '' && e.key == 'ArrowUp') {
+													e.preventDefault();
+
+													const userMessageElement = [
+														...document.getElementsByClassName('user-message')
+													]?.at(-1);
+
+													const editButton = [
+														...document.getElementsByClassName('edit-user-message-button')
+													]?.at(-1);
+
+													console.log(userMessageElement);
+
+													userMessageElement?.scrollIntoView({ block: 'center' });
+													editButton?.click();
+												}
+
+												if (commandsContainerElement) {
+													if (commandsContainerElement && e.key === 'ArrowUp') {
+														e.preventDefault();
+														commandsElement.selectUp();
+
+														const container = document.getElementById('command-options-container');
+														const commandOptionButton = [
+															...document.getElementsByClassName('selected-command-option-button')
+														]?.at(-1);
+
+														if (commandOptionButton && container) {
+															const elTop = commandOptionButton.offsetTop;
+															const elHeight = commandOptionButton.offsetHeight;
+															const containerHeight = container.clientHeight;
+
+															// Center the selected button in the container
+															container.scrollTop = elTop - containerHeight / 2 + elHeight / 2;
+														}
+													}
+
+													if (commandsContainerElement && e.key === 'ArrowDown') {
+														e.preventDefault();
+														commandsElement.selectDown();
+
+														const container = document.getElementById('command-options-container');
+														const commandOptionButton = [
+															...document.getElementsByClassName('selected-command-option-button')
+														]?.at(-1);
+
+														if (commandOptionButton && container) {
+															const elTop = commandOptionButton.offsetTop;
+															const elHeight = commandOptionButton.offsetHeight;
+															const containerHeight = container.clientHeight;
+
+															// Center the selected button in the container
+															container.scrollTop = elTop - containerHeight / 2 + elHeight / 2;
+														}
+													}
+
+													if (commandsContainerElement && e.key === 'Enter') {
+														e.preventDefault();
+
+														const commandOptionButton = [
+															...document.getElementsByClassName('selected-command-option-button')
+														]?.at(-1);
+
+														if (e.shiftKey) {
+															prompt = `${prompt}\n`;
+														} else if (commandOptionButton) {
+															commandOptionButton?.click();
+														} else {
+															document.getElementById('send-message-button')?.click();
+														}
+													}
+
+													if (commandsContainerElement && e.key === 'Tab') {
+														e.preventDefault();
+
+														const commandOptionButton = [
+															...document.getElementsByClassName('selected-command-option-button')
+														]?.at(-1);
+
+														commandOptionButton?.click();
+													}
+												} else {
+													if (
+														!$mobile ||
+														!(
+															'ontouchstart' in window ||
+															navigator.maxTouchPoints > 0 ||
+															navigator.msMaxTouchPoints > 0
+														)
+													) {
+														if (inOrNearComposition(e)) {
+															return;
+														}
+
+														// Prevent Enter key from creating a new line
+														const isCtrlPressed = e.ctrlKey || e.metaKey;
+														const enterPressed =
+															($settings?.ctrlEnterToSend ?? false)
+																? (e.key === 'Enter' || e.keyCode === 13) && isCtrlPressed
+																: (e.key === 'Enter' || e.keyCode === 13) && !e.shiftKey;
+
+														if (enterPressed) {
+															e.preventDefault();
+														}
+
+														// Submit the prompt when Enter key is pressed
+														if ((prompt !== '' || files.length > 0) && enterPressed) {
+															dispatch('submit', prompt);
+														}
+													}
+												}
+
+												if (e.key === 'Tab') {
+													const words = extractCurlyBraceWords(prompt);
+
+													if (words.length > 0) {
+														const word = words.at(0);
+
+														if (word && e.target instanceof HTMLTextAreaElement) {
+															// Prevent default tab behavior
+															e.preventDefault();
+															e.target.setSelectionRange(word?.startIndex, word.endIndex + 1);
+															e.target.focus();
+
+															const selectionRow =
+																(word?.startIndex - (word?.startIndex % e.target.cols)) /
+																e.target.cols;
+															const lineHeight = e.target.clientHeight / e.target.rows;
+
+															e.target.scrollTop = lineHeight * selectionRow;
+														}
+													}
+
+													e.target.style.height = '';
+													e.target.style.height = Math.min(e.target.scrollHeight, 320) + 'px';
+												}
+
+												if (e.key === 'Escape') {
+													console.log('Escape');
+													atSelectedModel = undefined;
+													selectedToolIds = [];
+													selectedFilterIds = [];
+													webSearchEnabled = false;
+													imageGenerationEnabled = false;
+													codeInterpreterEnabled = false;
+												}
+											}}
+											rows="1"
+											on:input={async (e) => {
+												e.target.style.height = '';
+												e.target.style.height = Math.min(e.target.scrollHeight, 320) + 'px';
+											}}
+											on:focus={async (e) => {
+												e.target.style.height = '';
+												e.target.style.height = Math.min(e.target.scrollHeight, 320) + 'px';
+											}}
+											on:paste={async (e) => {
+												const clipboardData = e.clipboardData || window.clipboardData;
+
+												if (clipboardData && clipboardData.items) {
+													for (const item of clipboardData.items) {
+														console.log(item);
+														if (item.type.indexOf('image') !== -1) {
+															const blob = item.getAsFile();
+															const reader = new FileReader();
+
+															reader.onload = function (e) {
+																files = [
+																	...files,
+																	{
+																		type: 'image',
+																		url: `${e.target.result}`
+																	}
+																];
+															};
+
+															reader.readAsDataURL(blob);
+														} else if (item?.kind === 'file') {
+															const file = item.getAsFile();
+															if (file) {
+																const _files = [file];
+																await inputFilesHandler(_files);
+																e.preventDefault();
+															}
+														} else if (item.type === 'text/plain') {
+															if (($settings?.largeTextAsFile ?? false) && !shiftKey) {
+																const text = clipboardData.getData('text/plain');
+
+																if (text.length > PASTED_TEXT_CHARACTER_LIMIT) {
+																	e.preventDefault();
+																	const blob = new Blob([text], { type: 'text/plain' });
+																	const file = new File([blob], `Pasted_Text_${Date.now()}.txt`, {
+																		type: 'text/plain'
+																	});
+
+																	await uploadFileHandler(file, true);
+																}
+															}
+														}
+													}
+												}
+											}}
+										/>
+									{/if}
 																				await uploadFileHandler(file, true);
 																			}
 																		}
