@@ -442,3 +442,8 @@ input[type='number'] {
 .tiptap tr {
 	@apply bg-white dark:bg-gray-900 dark:border-gray-850 text-xs;
 }
+
+/* Hide specific model tag label inside model buttons */
+button[aria-label="model-item"] .flex-shrink-0 > .bg-gray-500\\/20 {
+  display: none !important;
+}
