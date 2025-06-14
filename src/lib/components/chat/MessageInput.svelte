@@ -1223,7 +1223,7 @@
 														}
 
 													// Check if Ctrl + R is pressed
-													/*
+													<!--
 													if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
 														e.preventDefault();
 														console.log('regenerate');
@@ -1234,7 +1234,7 @@
 
 														regenerateButton?.click();
 													}
-													*/
+													-->
 
 														if (prompt === '' && e.key == 'ArrowUp') {
 															e.preventDefault();
