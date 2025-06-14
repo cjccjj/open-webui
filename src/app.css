@@ -616,3 +616,8 @@ input[type='number'] {
 	padding-right: 2px;
 	white-space: nowrap;
 }
+
+/* Hide specific model tag label inside model buttons */
+button[aria-label="model-item"] .flex-shrink-0 > .bg-gray-500\\/20 {
+  display: none !important;
+}
