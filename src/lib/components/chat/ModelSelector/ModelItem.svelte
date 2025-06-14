@@ -185,6 +185,7 @@
 				{/if}
 			</div>
 
+			<!--
 			{#if (item?.model?.tags ?? []).length > 0}
 				<div
 					class="flex gap-0.5 self-center items-start h-full w-full translate-y-[0.5px] overflow-x-auto scrollbar-none"
@@ -200,6 +201,7 @@
 					{/each}
 				</div>
 			{/if}
+			-->
 
 		</div>
 	</div>
