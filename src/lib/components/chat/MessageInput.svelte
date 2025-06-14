@@ -1175,33 +1175,162 @@
 								{/if}
 
 								<div class="px-2.5">
-									<div
-										class="scrollbar-hidden rtl:text-right ltr:text-left bg-transparent dark:text-gray-100 outline-hidden w-full pb-1 px-1 resize-none h-fit max-h-96 overflow-auto {files.length ===
-										0
-											? atSelectedModel !== undefined
-												? 'pt-1.5'
-												: 'pt-2.5'
-											: ''}"
-										id="chat-input-container"
-									>
-										{#if suggestions}
-											{#key $settings?.richTextInput ?? true}
-												{#key $settings?.showFormattingToolbar ?? false}
-													<RichTextInput
-														bind:this={chatInputElement}
-														id="chat-input"
-														onChange={(e) => {
-															prompt = e.md;
-															command = getCommand();
-														}}
-														json={true}
-														richText={$settings?.richTextInput ?? true}
-														messageInput={true}
-														showFormattingToolbar={$settings?.showFormattingToolbar ?? false}
-														floatingMenuPlacement={'top-start'}
-														insertPromptAsRichText={$settings?.insertPromptAsRichText ?? false}
-														shiftEnter={!($settings?.ctrlEnterToSend ?? false) &&
-															(!$mobile ||
+									{#if $settings?.richTextInput ?? true}
+										<div
+											class="scrollbar-hidden rtl:text-right ltr:text-left bg-transparent dark:text-gray-100 outline-hidden w-full pt-2.5 pb-[5px] px-1 resize-none h-fit max-h-80 overflow-auto"
+											id="chat-input-container"
+										>
+											{#key $settings?.showFormattingToolbar ?? false}
+												<RichTextInput
+													bind:this={chatInputElement}
+													id="chat-input"
+													onChange={(e) => {
+														prompt = e.md;
+														command = getCommand();
+													}}
+													json={true}
+													messageInput={true}
+													showFormattingToolbar={$settings?.showFormattingToolbar ?? false}
+													floatingMenuPlacement={'top-start'}
+													insertPromptAsRichText={$settings?.insertPromptAsRichText ?? false}
+													shiftEnter={!($settings?.ctrlEnterToSend ?? false) &&
+														(!$mobile ||
+															!(
+																'ontouchstart' in window ||
+																navigator.maxTouchPoints > 0 ||
+																navigator.msMaxTouchPoints > 0
+															))}
+													placeholder={placeholder ? placeholder : $i18n.t('Send a Message')}
+													largeTextAsFile={($settings?.largeTextAsFile ?? false) && !shiftKey}
+													autocomplete={$config?.features?.enable_autocomplete_generation &&
+														($settings?.promptAutocomplete ?? false)}
+													generateAutoCompletion={async (text) => {
+														if (selectedModelIds.length === 0 || !selectedModelIds.at(0)) {
+															toast.error($i18n.t('Please select a model first.'));
+														}
+
+														const res = await generateAutoCompletion(
+															localStorage.token,
+															selectedModelIds.at(0),
+															text,
+															history?.currentId
+																? createMessagesList(history, history.currentId)
+																: null
+														).catch((error) => {
+															console.log(error);
+
+															return null;
+														});
+
+														console.log(res);
+														return res;
+													}}
+													oncompositionstart={() => (isComposing = true)}
+													oncompositionend={(e) => {
+														compositionEndedAt = e.timeStamp;
+														isComposing = false;
+													}}
+													on:keydown={async (e) => {
+														e = e.detail.event;
+
+														const isCtrlPressed = e.ctrlKey || e.metaKey; // metaKey is for Cmd key on Mac
+														const commandsContainerElement =
+															document.getElementById('commands-container');
+
+														if (e.key === 'Escape') {
+															stopResponse();
+														}
+
+														// Command/Ctrl + Shift + Enter to submit a message pair
+														if (isCtrlPressed && e.key === 'Enter' && e.shiftKey) {
+															e.preventDefault();
+															createMessagePair(prompt);
+														}
+
+													// Check if Ctrl + R is pressed
+													if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
+														// e.preventDefault();
+														console.log('regenerate skipped');
+
+															const regenerateButton = [
+																...document.getElementsByClassName('regenerate-response-button')
+															]?.at(-1);
+
+														// regenerateButton?.click();
+													}
+
+														if (prompt === '' && e.key == 'ArrowUp') {
+															e.preventDefault();
+
+															const userMessageElement = [
+																...document.getElementsByClassName('user-message')
+															]?.at(-1);
+
+															if (userMessageElement) {
+																userMessageElement.scrollIntoView({ block: 'center' });
+																const editButton = [
+																	...document.getElementsByClassName('edit-user-message-button')
+																]?.at(-1);
+
+																editButton?.click();
+															}
+														}
+
+														if (commandsContainerElement) {
+															if (commandsContainerElement && e.key === 'ArrowUp') {
+																e.preventDefault();
+																commandsElement.selectUp();
+
+																const commandOptionButton = [
+																	...document.getElementsByClassName(
+																		'selected-command-option-button'
+																	)
+																]?.at(-1);
+																commandOptionButton.scrollIntoView({ block: 'center' });
+															}
+
+															if (commandsContainerElement && e.key === 'ArrowDown') {
+																e.preventDefault();
+																commandsElement.selectDown();
+
+																const commandOptionButton = [
+																	...document.getElementsByClassName(
+																		'selected-command-option-button'
+																	)
+																]?.at(-1);
+																commandOptionButton.scrollIntoView({ block: 'center' });
+															}
+
+															if (commandsContainerElement && e.key === 'Tab') {
+																e.preventDefault();
+
+																const commandOptionButton = [
+																	...document.getElementsByClassName(
+																		'selected-command-option-button'
+																	)
+																]?.at(-1);
+
+																commandOptionButton?.click();
+															}
+
+															if (commandsContainerElement && e.key === 'Enter') {
+																e.preventDefault();
+
+																const commandOptionButton = [
+																	...document.getElementsByClassName(
+																		'selected-command-option-button'
+																	)
+																]?.at(-1);
+
+																if (commandOptionButton) {
+																	commandOptionButton?.click();
+																} else {
+																	document.getElementById('send-message-button')?.click();
+																}
+															}
+														} else {
+															if (
+																!$mobile ||
 																!(
 																	'ontouchstart' in window ||
 																	navigator.maxTouchPoints > 0 ||
@@ -1419,14 +1548,14 @@
 
 												// Check if Ctrl + R is pressed
 												if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
-													e.preventDefault();
+													// e.preventDefault();
 													console.log('regenerate skipped');
 
 													const regenerateButton = [
 														...document.getElementsByClassName('regenerate-response-button')
 													]?.at(-1);
 
-													//regenerateButton?.click();
+													// regenerateButton?.click();
 												}
 
 												if (prompt === '' && e.key == 'ArrowUp') {
