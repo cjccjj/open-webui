@@ -223,7 +223,7 @@ print("${endTag}")
 
 	let extensions = [
 		basicSetup,
-		lineWrapping,
+		lineWrapping(),
 		keymap.of([{ key: 'Tab', run: acceptCompletion }, indentWithTab]),
 		indentUnit.of('    '),
 		placeholder('Enter your code here...'),
