@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { basicSetup, EditorView } from 'codemirror';
-	import { keymap, placeholder, lineWrapping } from '@codemirror/view';
+	import { keymap, placeholder } from '@codemirror/view';
 	import { Compartment, EditorState } from '@codemirror/state';
 
 	import { acceptCompletion } from '@codemirror/autocomplete';
@@ -212,7 +212,7 @@ print(black.format_str("""${code.replace(/\\/g, '\\\\').replace(/`/g, '\\`').rep
 
 	let extensions = [
 		basicSetup,
-		lineWrapping(),
+		EditorView.lineWrapping,
 		keymap.of([{ key: 'Tab', run: acceptCompletion }, indentWithTab]),
 		indentUnit.of('    '),
 		placeholder('Enter your code here...'),
