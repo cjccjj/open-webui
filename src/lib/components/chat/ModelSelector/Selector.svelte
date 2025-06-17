@@ -430,7 +430,6 @@
 							class="flex gap-1 w-fit text-center text-sm font-medium rounded-full bg-transparent px-1.5 pb-0.5"
 							bind:this={tagsContainerElement}
 						>
-							<!--
 							{#if items.find((item) => item.model?.connection_type === 'local') || items.find((item) => item.model?.connection_type === 'external') || items.find((item) => item.model?.direct) || tags.length > 0}
 								<button
 									class="min-w-fit outline-none p-1.5 {selectedTag === '' &&
@@ -446,6 +445,7 @@
 								</button>
 							{/if}
 
+							<!--
 							{#if items.find((item) => item.model?.connection_type === 'local')}
 								<button
 									class="min-w-fit outline-none p-1.5 {selectedConnectionType === 'local'
