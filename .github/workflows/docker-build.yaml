@@ -24,8 +24,8 @@ jobs:
         include:
           - platform: linux/amd64
             runner: ubuntu-latest
-          - platform: linux/arm64
-            runner: ubuntu-24.04-arm
+          # - platform: linux/arm64
+          #   runner: ubuntu-24.04-arm
 
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -142,7 +142,7 @@ jobs:
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -244,7 +244,7 @@ jobs:
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -347,7 +347,7 @@ jobs:
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -430,8 +430,6 @@ jobs:
         include:
           - platform: linux/amd64
             runner: ubuntu-latest
-          - platform: linux/arm64
-            runner: ubuntu-24.04-arm
 
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -589,7 +587,7 @@ jobs:
           IMAGE_NAME: '${{ github.repository }}'
 
       - name: Download digests
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           pattern: digests-cuda-*
           path: /tmp/digests
@@ -645,7 +643,7 @@ jobs:
           IMAGE_NAME: '${{ github.repository }}'
 
       - name: Download digests
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           pattern: digests-cuda126-*
           path: /tmp/digests
@@ -701,7 +699,7 @@ jobs:
           IMAGE_NAME: '${{ github.repository }}'
 
       - name: Download digests
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           pattern: digests-ollama-*
           path: /tmp/digests
