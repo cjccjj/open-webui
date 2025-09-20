@@ -1247,7 +1247,7 @@
 																	...document.getElementsByClassName('regenerate-response-button')
 																]?.at(-1);
 
-																regenerateButton?.click();
+																//regenerateButton?.click();
 															}
 
 															if (prompt === '' && e.key == 'ArrowUp') {
