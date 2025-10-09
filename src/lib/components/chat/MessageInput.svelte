@@ -1199,12 +1199,12 @@
 														floatingMenuPlacement={'top-start'}
 														insertPromptAsRichText={$settings?.insertPromptAsRichText ?? false}
 														shiftEnter={!($settings?.ctrlEnterToSend ?? false) &&
-															(!$mobile ||
-																!(
-																	'ontouchstart' in window ||
-																	navigator.maxTouchPoints > 0 ||
-																	navigator.msMaxTouchPoints > 0
-																))}
+															!$mobile &&
+															!(
+																'ontouchstart' in window ||
+																navigator.maxTouchPoints > 0 ||
+																navigator.msMaxTouchPoints > 0
+															)}
 														placeholder={placeholder ? placeholder : $i18n.t('Send a Message')}
 														largeTextAsFile={($settings?.largeTextAsFile ?? false) && !shiftKey}
 														autocomplete={$config?.features?.enable_autocomplete_generation &&
@@ -1262,7 +1262,7 @@
 																	...document.getElementsByClassName('regenerate-response-button')
 																]?.at(-1);
 
-																//regenerateButton?.click();
+																regenerateButton?.click();
 															}
 
 															if (prompt === '' && e.key == 'ArrowUp') {
