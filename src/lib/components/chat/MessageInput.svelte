@@ -1333,6 +1333,27 @@
 														const suggestionsContainerElement =
 															document.getElementById('suggestions-container');
 
+															if (e.key === 'Escape') {
+																stopResponse();
+															}
+
+															// Command/Ctrl + Shift + Enter to submit a message pair
+															if (isCtrlPressed && e.key === 'Enter' && e.shiftKey) {
+																e.preventDefault();
+																createMessagePair(prompt);
+															}
+
+															// Check if Ctrl + R is pressed
+															if (prompt === '' && isCtrlPressed && e.key.toLowerCase() === 'r') {
+																//e.preventDefault();
+																console.log('regenerate');
+
+																const regenerateButton = [
+																	...document.getElementsByClassName('regenerate-response-button')
+																]?.at(-1);
+
+																//regenerateButton?.click();
+															}
 														if (e.key === 'Escape') {
 															stopResponse();
 														}
