@@ -228,6 +228,7 @@ print("${endTag}")
 	let extensions = [
 		basicSetup,
 		EditorView.contentAttributes.of({ tabindex: '0' }),
+		EditorView.lineWrapping,
 		keymap.of([{ key: 'Tab', run: acceptCompletion }, indentWithTab]),
 		indentUnit.of('    '),
 		editorPlaceholder.of([]),
