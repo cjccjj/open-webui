@@ -230,6 +230,7 @@ print("${endTag}")
 		basicSetup,
 		EditorView.contentAttributes.of({ tabindex: '0' }),
 		EditorView.contentAttributes.of(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+		EditorView.lineWrapping,
 		keymap.of([{ key: 'Tab', run: acceptCompletion }, indentWithTab]),
 		indentUnit.of('    '),
 		editorPlaceholder.of([]),
