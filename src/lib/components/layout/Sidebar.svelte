@@ -25,7 +25,6 @@
 		visiblePinnedModels,
 		visibleControls,
 		selectedFolder,
-		WEBUI_NAME,
 		sidebarWidth
 	} from '$lib/stores';
 	import {
@@ -1328,17 +1327,33 @@
 						/>
 					</a>
 
-					<a href="/" class="flex min-w-0 flex-1 px-0.5" on:click={newChatHandler}>
-						<!-- LICENSE covers this Open WebUI sidebar name.
-					Do not alter, remove, obscure, or replace it except as LICENSE permits:
-					https://docs.openwebui.com/license. -->
-						<div
-							id="sidebar-webui-name"
-							class=" self-center truncate font-normal text-gray-700 dark:text-gray-200"
-						>
-							{$WEBUI_NAME}
-						</div>
-					</a>
+					{#if $user}
+						{@const email = ($user.email ?? '').toLowerCase()}
+						{@const dshPath =
+							email === 'changjun.z@gmail.com' ? '/dsh/cj/' :
+							email === 'darcyzhangdx@gmail.com' ? '/dsh/dx/' : null}
+
+						{#if dshPath}
+							<Tooltip
+								content="Try DSH for tasks and coding"
+								placement="bottom"
+								className="flex shrink-0"
+							>
+								<a
+									href={dshPath}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="flex shrink-0 items-center gap-1 rounded-lg px-1.5 py-1 text-sm text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900"
+									aria-label="Try DSH for tasks and coding"
+									draggable="false"
+								>
+									🖥️ DSH
+								</a>
+							</Tooltip>
+						{/if}
+					{/if}
+
+					<div class="min-w-0 flex-1"></div>
 					<div class="flex shrink-0 items-center gap-px">
 						{#if $config?.features?.enable_notifications}<InboxButton
 								onClose={() => inboxHost.close()}
